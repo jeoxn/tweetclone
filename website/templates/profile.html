@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ username }}
+{% endblock %}
+
+{% block content %}
+<div class="border rounded px-4 pb-3 d-flex align-items-center" style="max-width: 500px; height: 200px;">
+    <div style="width: 400px;">
+        <div class="d-flex align-items-center my-3 justify-content-between">
+            <h3 class="mx-3" style="margin-bottom: 0px;">{{ username }}</h3>
+            {% if not current_user.id == user.id %}
+            {% if current_user.id in follower_id %}
+            <a href="/unfollow/{{ user.id }}" class="btn btn-outline-primary float-end" style="text-decoration: none">Unfollow</a>
+            {% else %}
+            <a href="/follow/{{ user.id }}" class="btn btn-outline-primary float-end" style="text-decoration: none">Follow</a>
+            {% endif %}
+            {% endif %}
+        </div>
+        <div class="d-flex">
+            <h6 class="mx-3">{{ followers }} Followers</h6>
+            <h6 class="mx-3">{{ following }} Following</h6>
+        </div>
+    </div>
+</div>
+<div class="m-3">
+    <h5>Tweets</h5>
+    {% for tweet in tweets %}
+    <hr>
+    <h6 class="text-muted">{{ tweet.date_created }}</h6>
+    <img src="{{ url_for('static', filename='img/'+tweet.image) }}" alt="" width="400px" class="border p-1 rounded">
+    <p>{{ tweet.text }}</p>
+    {% endfor %}
+</div>
+{% endblock %}

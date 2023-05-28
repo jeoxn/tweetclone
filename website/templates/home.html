@@ -1,0 +1,86 @@
+{% extends 'base.html' %} 
+
+{% block title %}Home{% endblock %}
+
+{% block css %}{% endblock %}
+{% block js %}{% endblock %}
+
+{% block content %}
+
+<h3>Tweets</h3>
+
+<div id="content">
+{% for tweet in tweets %}
+    <div class="border rounded p-4 my-3">
+        <a href="/profile/{{ tweet.user.id }}" class="fs-5" style="text-decoration: none;">{{ tweet.user.username }}</a>
+        <h6 class="text-muted">{{ tweet.date_created }}</h6>
+        <img src="{{ url_for('static', filename='img/'+tweet.image) }}" alt="" width="400px" class="border p-1 rounded">
+        <p>{{ tweet.text }}</p>
+        <div class="d-flex align-items-center">
+            <!-- check if current user already like this tweet -->
+            {% if tweet.id in liked %}
+            <!-- <form action="/unlike/{{tweet.id}}" method="post"> -->
+                <button type="button" class="btn btn-danger rounded-pill" id="unlike" onclick="unlike('{{ tweet.id }}')">🤍</button>
+            <!-- </form> -->
+            {% else %}
+            <!-- <form action="/like/{{ tweet.id }}" method="post"> -->
+                <button type="button" class="btn btn-outline-danger rounded-pill" id="like" onclick="like('{{tweet.id}}')">❤️</button>
+            <!-- </form> -->
+            {% endif %}
+            <!-- Button trigger modal -->
+            <p class="mt-2 ms-2">{{ tweet.likes|length }} likes</p>
+        <button type="button" class="btn btn-outline-primary rounded-pill mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal{{tweet.id}}">
+            Comments
+        </button>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal{{tweet.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Comments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <p>{{ tweet.comments|length }} Comments</p>
+                <hr>
+                {% for comment in tweet.comments %}
+                <div class="border rounded p-3 m-2">
+                    <div>
+                        <a href="/profile/{{comment.user.id}}" style="margin: 0px;" class="fw-semibold">{{ comment.user.username }}</a>
+                        <p class="text-muted">{{comment.date_created}}</p>
+                    </div>
+                    <p style="margin: 0px;">{{ comment.comment }}</p>
+                </div>
+                {% endfor %}
+                </div>
+                <form action="/comment/{{tweet.id}}" method="post">
+                <div class="modal-footer">
+                        <input type="text" name="comment" class="form-control">
+                        <button type="submit" class="btn btn-primary">Comment</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+<script>
+    function like(id) {
+        $.post('/like/' + id);
+        $("#content").load(location.href + " #content");
+        $("#content").load(location.href + " #content");
+    }
+
+    function unlike(id) {
+        $.post('/unlike/' + id);
+        $("#content").load(location.href + " #content");
+        $("#content").load(location.href + " #content");
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %} 
+
+{% block title %}Post{% endblock %} 
+
+{% block content %}
+
+<div class="border rounded p-4 m-auto" style="width: 650px">
+  <h4 class="fw-semibold">Post something</h4>
+  <form action="/post" method="post" enctype="multipart/form-data">
+    <div class="my-3">
+      <label for="tweet">Tweet</label>
+      <input type="text" id="tweet" class="form-control" name="text" />
+    </div>
+    <div class="my-3">
+      <img
+        id="image-preview"
+        style="max-width: 400px"
+      />
+      <br>
+      <label for="image">Image</label>
+      <input
+        type="file"
+        id="image"
+        class="form-control"
+        name="image"
+        onchange="updatePreview(this, 'image-preview')"
+        accept="image/*"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Tweet</button>
+  </form>
+</div>
+
+{% for post in posts %}
+    <div class="border rounded p-4 my-3">
+    <a href="/profile/{{ post.user.id }}" class="fs-5" style="text-decoration: none;">{{ post.user.username }}</a>
+    <h6 class="text-muted">{{ post.date_created }}</h6>
+    <img src="{{ url_for('static', filename='img/'+post.image) }}" alt="" width="400px">
+    <p>{{ post.text }}</p>
+</div>
+{% endfor %}
+
+<script>
+  function updatePreview(input, target) {
+    let file = input.files[0];
+    let reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      let img = document.getElementById(target);
+      // can also use "this.result"
+      img.src = reader.result;
+    };
+  }
+</script>
+
+{% endblock %}
